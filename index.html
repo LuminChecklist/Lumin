@@ -1167,6 +1167,21 @@
             z-index: 1000;
         }
 
+        .task-input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .task-input-container.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
         .task-input {
             background: var(--bg-secondary);
             border: 2px solid var(--border-color);
@@ -1174,23 +1189,65 @@
             padding: 1rem 1.5rem;
             font-size: 1.1rem;
             color: var(--text-primary);
-            width: 100%;
-            margin-bottom: 1rem;
+            flex: 1;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
-            transform: translateY(-10px);
-            opacity: 0;
-        }
-
-        .task-input.show {
-            transform: translateY(0);
-            opacity: 1;
         }
 
         .task-input:focus {
             border-color: var(--color-purple);
             box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1), 0 0 15px rgba(168, 85, 247, 0.05);
-            transform: translateY(-2px) scale(1.02);
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .task-submit-btn {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-rainbow);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .task-submit-btn:hover::before {
+            opacity: 0.3;
+        }
+
+        .task-submit-btn:hover {
+            transform: scale(1.05) translateY(-1px);
+            box-shadow: 0 6px 20px var(--shadow-color), 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .task-submit-btn:active {
+            transform: scale(0.95) translateY(0);
+            transition: all 0.1s ease;
+        }
+
+        .task-submit-btn span {
+            position: relative;
+            z-index: 1;
         }
 
         .completed-section {
@@ -1550,6 +1607,16 @@
                 font-size: 1.75rem;
             }
             
+            .task-submit-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .task-input-container {
+                gap: 0.5rem;
+            }
+            
             .task-item .task-content {
                 padding: 1rem;
             }
@@ -1569,7 +1636,10 @@
             </div>
         </div>
 
-        <input type="text" class="task-input" id="taskInput" placeholder="What would you like to accomplish?" style="display: none;">
+        <div class="task-input-container" id="taskInputContainer" style="display: none;">
+            <input type="text" class="task-input" id="taskInput" placeholder="Type your task and press Enter to add...">
+            <button class="task-submit-btn" id="taskSubmitBtn" type="button">⏎</button>
+        </div>
 
         <ul class="task-list" id="taskList">
             <!-- Tasks will be inserted here -->
@@ -1778,7 +1848,9 @@
                 this.taskList = document.getElementById('taskList');
                 this.completedList = document.getElementById('completedList');
                 this.addTaskBtn = document.getElementById('addTaskBtn');
+                this.taskInputContainer = document.getElementById('taskInputContainer');
                 this.taskInput = document.getElementById('taskInput');
+                this.taskSubmitBtn = document.getElementById('taskSubmitBtn');
                 this.themeToggle = document.getElementById('themeToggle');
                 this.settingsBtn = document.getElementById('settingsBtn');
                 this.settingsModal = document.getElementById('settingsModal');
@@ -1820,10 +1892,10 @@
 
             bindEvents() {
                 this.addTaskBtn.addEventListener('click', () => this.showTaskInput());
+                this.taskSubmitBtn.addEventListener('click', () => this.submitTask());
                 this.taskInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter' && this.taskInput.value.trim()) {
-                        this.addTask(this.taskInput.value.trim());
-                        this.hideTaskInput();
+                        this.submitTask();
                         this.taskAddedViaEnter = true;
                     }
                 });
@@ -1876,21 +1948,28 @@
 
             showTaskInput() {
                 this.taskAddedViaEnter = false;
-                this.taskInput.style.display = 'block';
+                this.taskInputContainer.style.display = 'flex';
                 this.taskInput.value = '';
                 
                 // Trigger animation
                 setTimeout(() => {
-                    this.taskInput.classList.add('show');
+                    this.taskInputContainer.classList.add('show');
                     this.taskInput.focus();
                 }, 10);
             }
 
             hideTaskInput() {
-                this.taskInput.classList.remove('show');
+                this.taskInputContainer.classList.remove('show');
                 setTimeout(() => {
-                    this.taskInput.style.display = 'none';
+                    this.taskInputContainer.style.display = 'none';
                 }, 400);
+            }
+
+            submitTask() {
+                if (this.taskInput.value.trim()) {
+                    this.addTask(this.taskInput.value.trim());
+                    this.hideTaskInput();
+                }
             }
 
             addTask(text, completed = false, id = null) {
