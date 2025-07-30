@@ -1,0 +1,2639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumin - Psychology-Optimized Checklist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light mode colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafafa;
+            --text-primary: #374151;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            
+            /* Premium: Pastel rainbow gradient */
+            --gradient-rainbow: linear-gradient(135deg, 
+                #fef3c7 0%,   /* soft yellow */
+                #fce7f3 25%,  /* soft pink */
+                #e0e7ff 50%,  /* soft blue */
+                #dcfce7 75%,  /* soft green */
+                #fed7d7 100%  /* soft coral */
+            );
+            
+            /* Free: Grayscale gradient */
+            --gradient-grayscale: linear-gradient(135deg, 
+                #f3f4f6 0%,
+                #e5e7eb 25%,
+                #d1d5db 50%,
+                #9ca3af 75%,
+                #6b7280 100%
+            );
+            
+            /* Individual pastel colors */
+            --color-peach: #fed7d7;
+            --color-pink: #fce7f3;
+            --color-blue: #e0e7ff;
+            --color-green: #dcfce7;
+            --color-yellow: #fef3c7;
+            --color-purple: #ede9fe;
+            --color-orange: #fed7aa;
+            --color-mint: #d1fae5;
+            
+            /* Dynamic colors based on premium status */
+            --accent-gradient: var(--gradient-rainbow);
+            --accent-color: #ede9fe;
+            --premium-glow: rgba(168, 85, 247, 0.4);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            
+            /* Free mode dark colors */
+            --gradient-grayscale: linear-gradient(135deg, 
+                #2d2d2d 0%,
+                #3a3a3a 25%,
+                #4a4a4a 50%,
+                #5a5a5a 75%,
+                #6a6a6a 100%
+            );
+        }
+
+        /* Free Mode Overrides */
+        [data-premium="false"] {
+            --accent-gradient: var(--gradient-grayscale);
+            --accent-color: #9ca3af;
+            --premium-glow: rgba(156, 163, 175, 0.3);
+        }
+
+        [data-premium="false"] [data-theme="dark"] {
+            --accent-color: #4b5563;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-pink);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-rainbow);
+            border-radius: 10px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .container.timer-active {
+            transform: translateX(-50%);
+            max-width: 50vw;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .app-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .app-logo:hover {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+            transform: scale(1.02);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .settings-btn {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
+
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .settings-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-panel {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .settings-modal.show .settings-panel {
+            transform: scale(1) translateY(0);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        .setting-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .setting-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--border-color);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-gradient);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        .select-dropdown {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .select-dropdown:focus {
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+            outline: none;
+        }
+
+        .stats-display {
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Upgrade Banner */
+        .upgrade-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            border: 2px solid transparent;
+        }
+
+        .upgrade-banner:hover {
+            transform: translateX(-50%) translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .upgrade-banner.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            visibility: hidden;
+        }
+
+        .upgrade-banner-icon {
+            font-size: 1.5rem;
+        }
+
+        .upgrade-banner-text {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .upgrade-banner-price {
+            background: var(--gradient-rainbow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* Payment Modal */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .payment-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .payment-panel {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .payment-modal.show .payment-panel {
+            transform: scale(1) translateY(0);
+        }
+
+        .payment-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-rainbow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .payment-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .premium-features {
+            text-align: left;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+        }
+
+        .premium-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .premium-feature:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+        }
+
+        .payment-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .upgrade-btn {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upgrade-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-rainbow);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .upgrade-btn:hover::before {
+            opacity: 0.2;
+        }
+
+        .upgrade-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .upgrade-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cancel-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+        }
+
+        /* Free Mode Overrides - Disable animations and effects */
+        [data-premium="false"] .task-item {
+            transition: none;
+        }
+
+        [data-premium="false"] .task-item:hover {
+            transform: none;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        [data-premium="false"] .task-item::before {
+            display: none;
+        }
+
+        [data-premium="false"] .add-task-btn:hover,
+        [data-premium="false"] .theme-toggle:hover,
+        [data-premium="false"] .settings-btn:hover {
+            transform: none;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        [data-premium="false"] .app-logo:hover {
+            transform: none;
+        }
+
+        [data-premium="false"] .task-item.completing,
+        [data-premium="false"] .task-item.removing,
+        [data-premium="false"] .task-item.shifting,
+        [data-premium="false"] .task-item.entering,
+        [data-premium="false"] .task-item.deleting {
+            animation: none;
+        }
+
+        [data-premium="false"] .delete-btn:hover,
+        [data-premium="false"] .undo-btn:hover {
+            transform: none;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        /* Timer Panel Styles */
+        .timer-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100vh;
+            background: var(--bg-primary);
+            border-left: 2px solid var(--border-color);
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+            box-shadow: -10px 0 30px var(--shadow-color);
+        }
+
+        .timer-panel.active {
+            transform: translateX(0);
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .timer-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-timer {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-timer:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            transform: scale(1.1);
+        }
+
+        .current-task {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .task-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .task-name::before {
+            content: 'Task: ';
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .task-status {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .task-status::before {
+            content: 'Status: ';
+            color: var(--text-muted);
+        }
+
+        .timer-status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--accent-gradient);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        .timer-status-indicator.paused {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+
+        .timer-status-indicator .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            transition: all 0.3s ease;
+        }
+
+        .timer-status-indicator:not(.paused) .status-dot {
+            animation: pulse 2s infinite;
+        }
+
+        .timer-status-indicator.paused .status-dot {
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .timer-display {
+            text-align: center;
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .timer-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .timer-circle svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 8;
+        }
+
+        .timer-circle-progress {
+            fill: none;
+            stroke: url(#timerGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-time {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .timer-btn {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 50px;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px var(--shadow-color);
+            position: relative;
+        }
+
+        .timer-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px var(--shadow-color), 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .timer-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .timer-btn.secondary:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 6px 20px var(--shadow-color), 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+        .timer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .timer-btn:disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .timer-settings {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .timer-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .timer-setting:last-child {
+            margin-bottom: 0;
+        }
+
+        .timer-setting label {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .time-input {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            width: 80px;
+            text-align: center;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .time-input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+
+
+        .timer-upgrade-hint {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            max-width: 200px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .timer-upgrade-hint.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) translateX(-10px);
+        }
+
+        .timer-upgrade-hint::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -8px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid #333;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        /* Mobile responsiveness for timer */
+        @media (max-width: 768px) {
+            .timer-panel {
+                width: 100%;
+                top: 0;
+                height: 100vh;
+                padding: 1rem;
+            }
+            
+            .container.timer-active {
+                transform: translateX(-100%);
+                max-width: 100vw;
+                opacity: 0;
+                pointer-events: none;
+            }
+            
+            .timer-circle {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .timer-time {
+                font-size: 2rem;
+            }
+            
+            .timer-controls {
+                gap: 0.75rem;
+            }
+            
+            .timer-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1rem;
+            }
+            
+            .current-task {
+                padding: 1rem;
+            }
+            
+            .timer-status-indicator {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .container.timer-active {
+                transform: translateX(-40%);
+                max-width: 45vw;
+            }
+            
+            .timer-panel {
+                width: 55%;
+            }
+        }
+
+        .theme-toggle {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 20px var(--shadow-color);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95) rotate(-5deg);
+            transition: all 0.1s ease;
+        }
+
+        .add-task-btn {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-task-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-rainbow);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .add-task-btn:hover::before {
+            opacity: 0.3;
+        }
+
+        .add-task-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 30px var(--shadow-color), 0 0 0 2px rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .add-task-btn:active {
+            transform: scale(0.95) rotate(90deg);
+            transition: all 0.1s ease;
+        }
+
+        .add-task-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .task-list {
+            list-style: none;
+            padding: 6px;
+        }
+
+        .task-item {
+            background: var(--accent-gradient);
+            border-radius: 20px;
+            padding: 4px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            opacity: 1;
+            transform: translateY(0);
+            will-change: transform, opacity, box-shadow;
+        }
+
+        .task-item::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            z-index: 0;
+        }
+
+        .task-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+        }
+
+        .task-item:hover::before {
+            opacity: 0.15;
+            filter: blur(1px);
+        }
+
+        .task-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px var(--shadow-color), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .task-item:hover::after {
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+            padding: 1.5rem;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            border: 2px solid var(--text-muted);
+            background: transparent;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox.checked {
+            background: var(--accent-gradient);
+            border-color: transparent;
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .task-item.completed .task-text {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .task-work-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.8;
+            margin-left: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .task-work-time::before {
+            content: '○';
+            font-size: 0.6rem;
+            opacity: 0.6;
+        }
+
+        .task-item.completed {
+            opacity: 0.7;
+        }
+
+        .task-item.removing {
+            animation: taskComplete 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .task-item.completing {
+            animation: taskGlow 0.3s ease-in-out;
+        }
+
+        .task-item.shifting {
+            animation: taskShift 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .drag-handle {
+            color: var(--text-muted);
+            cursor: grab;
+            padding: 0.5rem;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover .drag-handle {
+            opacity: 1;
+        }
+
+        .task-item.dragging {
+            opacity: 0.8;
+            transform: rotate(5deg);
+            z-index: 1000;
+        }
+
+        .task-input {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+
+        .task-input.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .task-input:focus {
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1), 0 0 15px rgba(168, 85, 247, 0.05);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .completed-section {
+            margin-top: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .completed-section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .completed-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            border: 2px solid transparent;
+        }
+
+        .completed-header:hover {
+            color: var(--text-primary);
+            background: var(--accent-gradient);
+            opacity: 0.1;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .completed-toggle {
+            font-size: 1.2rem;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .completed-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .completed-list {
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 6px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .completed-list.collapsed {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-10px);
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .completed-list:not(.collapsed) {
+            max-height: 2000px;
+        }
+
+        .completed-task {
+            opacity: 0.6;
+            filter: grayscale(0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .completed-task:hover {
+            opacity: 0.8;
+            filter: grayscale(0.1);
+            transform: translateY(-1px);
+        }
+
+        .undo-btn {
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .completed-task:hover .undo-btn {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .undo-btn:hover {
+            transform: scale(1.2) rotate(-15deg);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-left: 0.5rem;
+        }
+
+        .task-item:hover .delete-btn {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.2) rotate(15deg);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        /* Animations */
+        @keyframes taskGlow {
+            0% {
+                box-shadow: 0 2px 10px var(--shadow-color);
+            }
+            50% {
+                box-shadow: 0 0 25px var(--premium-glow), 0 0 50px var(--premium-glow);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 2px 10px var(--shadow-color);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes taskComplete {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                margin-bottom: 1rem;
+                padding: 4px;
+            }
+            20% {
+                opacity: 0.9;
+                transform: translateY(-8px) scale(1.02);
+            }
+            60% {
+                opacity: 0.6;
+                transform: translateY(-25px) scale(0.98);
+            }
+            80% {
+                opacity: 0.3;
+                transform: translateY(-35px) scale(0.94);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+                margin-bottom: 0;
+                padding: 0;
+                height: 0;
+            }
+        }
+
+        @keyframes taskShift {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes taskEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-2px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .task-item.entering {
+            animation: taskEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes taskDelete {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                margin-bottom: 1rem;
+                padding: 4px;
+            }
+            20% {
+                opacity: 0.8;
+                transform: translateX(-10px) scale(0.98);
+            }
+            60% {
+                opacity: 0.4;
+                transform: translateX(-30px) scale(0.94);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50px) scale(0.9);
+                margin-bottom: 0;
+                padding: 0;
+                height: 0;
+            }
+        }
+
+        .task-item.deleting {
+            animation: taskDelete 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes confetti {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1) rotate(72deg);
+            }
+            80% {
+                opacity: 1;
+                transform: translateY(-30px) scale(0.8) rotate(288deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0) rotate(360deg);
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: confetti 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            z-index: 1000;
+        }
+
+        @keyframes ripple {
+            0% {
+                opacity: 0.8;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            opacity: 0.3;
+            pointer-events: none;
+            animation: ripple 1s ease-out forwards;
+        }
+
+        .glow-pulse {
+            animation: glowPulse 1s ease-out;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-subtext {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive design */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .app-logo {
+                font-size: 1.75rem;
+            }
+            
+            .controls {
+                gap: 0.75rem;
+            }
+            
+            .settings-btn, .theme-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+            
+            .add-task-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.75rem;
+            }
+            
+            .task-item .task-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+    <body data-theme="light" data-premium="false">
+    <div class="container">
+        <div class="top-bar">
+            <div class="app-logo">Lumin</div>
+            <div class="controls">
+                <button class="settings-btn" id="settingsBtn">⚙</button>
+                <button class="theme-toggle" id="themeToggle">◐</button>
+                <button class="add-task-btn" id="addTaskBtn">
+                    <span>+</span>
+                </button>
+            </div>
+        </div>
+
+        <input type="text" class="task-input" id="taskInput" placeholder="What would you like to accomplish?" style="display: none;">
+
+        <ul class="task-list" id="taskList">
+            <!-- Tasks will be inserted here -->
+        </ul>
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">✦</div>
+            <div class="empty-state-text">Ready to accomplish great things?</div>
+            <div class="empty-state-subtext">Click the + button to add your first task</div>
+        </div>
+
+        <div class="completed-section" id="completedSection" style="display: none;">
+            <div class="completed-header" id="completedHeader">
+                <span class="completed-toggle" id="completedToggle">▼</span>
+                <span>✓ Completed Tasks</span>
+                <span id="completedCount">(0)</span>
+            </div>
+            <ul class="completed-list" id="completedList">
+                <!-- Completed tasks will be inserted here -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h2 class="settings-title">Settings</h2>
+                <button class="close-btn" id="closeSettings">×</button>
+            </div>
+            
+            <div class="setting-group">
+                <label class="setting-label">Auto-hide completed tasks</label>
+                <div class="setting-description">Automatically hide completed tasks after a specified time</div>
+                <select class="select-dropdown" id="autoHideSetting">
+                    <option value="never">Never</option>
+                    <option value="immediate">Immediately</option>
+                    <option value="1hour">1 hour</option>
+                    <option value="1day">1 day</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Collapse completed tasks by default</label>
+                <div class="setting-description">Keep the completed section collapsed when you open the app</div>
+                <div class="toggle-switch" id="collapseCompletedToggle"></div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Enable confetti animation</label>
+                <div class="setting-description">Show confetti when completing tasks</div>
+                <div class="toggle-switch active" id="confettiToggle"></div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Show total completed today</label>
+                <div class="setting-description">Display your daily completion count</div>
+                <div class="toggle-switch active" id="showStatsToggle"></div>
+            </div>
+
+                         <div class="stats-display" id="statsDisplay">
+                 <div class="stats-number" id="todayCompleted">0</div>
+                 <div class="stats-label">Tasks completed today</div>
+             </div>
+         </div>
+     </div>
+
+     <!-- Upgrade Banner -->
+     <div class="upgrade-banner" id="upgradeBanner">
+         <span class="upgrade-banner-icon">✨</span>
+         <span class="upgrade-banner-text">Unlock premium visual experience for just</span>
+         <span class="upgrade-banner-price">$1.99</span>
+     </div>
+
+     <!-- Payment Modal -->
+     <div class="payment-modal" id="paymentModal">
+         <div class="payment-panel">
+             <h2 class="payment-title">Unlock Premium Lumin</h2>
+             <p class="payment-subtitle">Experience the full dopamine-powered productivity journey</p>
+             
+             <div class="premium-features">
+                 <div class="premium-feature">
+                     <span class="feature-icon">🌈</span>
+                     <span>Beautiful pastel rainbow gradients</span>
+                 </div>
+                 <div class="premium-feature">
+                     <span class="feature-icon">✨</span>
+                     <span>Satisfying confetti & glow animations</span>
+                 </div>
+                 <div class="premium-feature">
+                     <span class="feature-icon">🎭</span>
+                     <span>Smooth micro-interactions & hover effects</span>
+                 </div>
+                 <div class="premium-feature">
+                     <span class="feature-icon">🎯</span>
+                     <span>Psychology-optimized completion rewards</span>
+                 </div>
+                 <div class="premium-feature">
+                     <span class="feature-icon">⏱️</span>
+                     <span>Focus timer with Pomodoro technique</span>
+                 </div>
+                 <div class="premium-feature">
+                     <span class="feature-icon">🎵</span>
+                     <span>Optional completion sounds (coming soon)</span>
+                 </div>
+             </div>
+
+             <div class="payment-buttons">
+                 <button class="upgrade-btn" id="purchaseBtn">
+                     <span>Upgrade for $1.99</span>
+                 </button>
+                 <button class="cancel-btn" id="cancelPurchase">Maybe Later</button>
+             </div>
+                  </div>
+     </div>
+
+     <!-- Timer Panel (Premium Only) -->
+     <div class="timer-panel" id="timerPanel">
+         <div class="timer-header">
+             <h2 class="timer-title">○ Focus Timer</h2>
+             <button class="close-timer" id="closeTimer">×</button>
+         </div>
+
+         <div class="current-task" id="currentTaskDisplay">
+             <div class="task-name" id="timerTaskName">Select a task to focus on</div>
+             <div class="task-status" id="timerTaskStatus" style="display: none;">Ready to start</div>
+                         <div class="timer-status-indicator paused" id="timerStatusIndicator">
+                <span id="statusText">Ready to focus: 25:00</span>
+            </div>
+         </div>
+
+         <div class="timer-display">
+             <div class="timer-circle">
+                 <svg width="200" height="200">
+                     <defs>
+                         <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                             <stop offset="0%" style="stop-color:#fef3c7"/>
+                             <stop offset="25%" style="stop-color:#fce7f3"/>
+                             <stop offset="50%" style="stop-color:#e0e7ff"/>
+                             <stop offset="75%" style="stop-color:#dcfce7"/>
+                             <stop offset="100%" style="stop-color:#fed7d7"/>
+                         </linearGradient>
+                     </defs>
+                     <circle class="timer-circle-bg" cx="100" cy="100" r="90"/>
+                     <circle class="timer-circle-progress" cx="100" cy="100" r="90" 
+                             stroke-dasharray="565.48" stroke-dashoffset="565.48" id="timerProgress"/>
+                 </svg>
+                 <div class="timer-time" id="timerDisplay">25:00</div>
+             </div>
+         </div>
+
+         <div class="timer-controls">
+             <button class="timer-btn" id="startTimer">▶</button>
+             <button class="timer-btn" id="pauseTimer" style="display: none;">⏸</button>
+             <button class="timer-btn secondary" id="resetTimer">↻</button>
+         </div>
+
+         <div class="timer-settings">
+             <div class="timer-setting">
+                 <label>Focus Time (minutes)</label>
+                 <input type="number" class="time-input" id="focusTime" value="25" min="1" max="120">
+             </div>
+             <div class="timer-setting">
+                 <label>Break Time (minutes)</label>
+                 <input type="number" class="time-input" id="breakTime" value="5" min="1" max="30">
+             </div>
+         </div>
+
+
+     </div>
+
+     <!-- Timer Upgrade Hint -->
+     <div class="timer-upgrade-hint" id="timerUpgradeHint">
+         <div>⏱️ Upgrade to Premium</div>
+         <div style="margin-top: 0.5rem; font-size: 0.8rem;">Unlock focus timer & productivity tools!</div>
+     </div>
+
+     <script>
+        class TaskManager {
+            constructor() {
+                this.tasks = this.loadTasks();
+                this.nextId = this.getNextId();
+                this.draggedItem = null;
+                this.completedCollapsed = false;
+                this.taskAddedViaEnter = false;
+                this.settings = this.loadSettings();
+                this.isPremium = this.loadPremiumStatus();
+                
+                // Timer state
+                this.selectedTask = null;
+                this.timerActive = false;
+                this.timerRunning = false;
+                this.timerTime = 25 * 60; // 25 minutes in seconds
+                this.timerInterval = null;
+
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.renderTasks();
+                this.initializeTheme();
+                this.initializePremiumState();
+                this.updateStats();
+            }
+
+            initializeElements() {
+                this.taskList = document.getElementById('taskList');
+                this.completedList = document.getElementById('completedList');
+                this.addTaskBtn = document.getElementById('addTaskBtn');
+                this.taskInput = document.getElementById('taskInput');
+                this.themeToggle = document.getElementById('themeToggle');
+                this.settingsBtn = document.getElementById('settingsBtn');
+                this.settingsModal = document.getElementById('settingsModal');
+                this.closeSettings = document.getElementById('closeSettings');
+                this.emptyState = document.getElementById('emptyState');
+                this.completedSection = document.getElementById('completedSection');
+                this.completedHeader = document.getElementById('completedHeader');
+                this.completedToggle = document.getElementById('completedToggle');
+                this.completedCount = document.getElementById('completedCount');
+                this.autoHideSetting = document.getElementById('autoHideSetting');
+                this.collapseCompletedToggle = document.getElementById('collapseCompletedToggle');
+                this.confettiToggle = document.getElementById('confettiToggle');
+                this.showStatsToggle = document.getElementById('showStatsToggle');
+                this.statsDisplay = document.getElementById('statsDisplay');
+                this.todayCompleted = document.getElementById('todayCompleted');
+                this.upgradeBanner = document.getElementById('upgradeBanner');
+                this.paymentModal = document.getElementById('paymentModal');
+                this.purchaseBtn = document.getElementById('purchaseBtn');
+                this.cancelPurchase = document.getElementById('cancelPurchase');
+                
+                // Timer elements
+                this.container = document.querySelector('.container');
+                this.timerPanel = document.getElementById('timerPanel');
+                this.closeTimer = document.getElementById('closeTimer');
+                this.timerTaskName = document.getElementById('timerTaskName');
+                this.timerTaskStatus = document.getElementById('timerTaskStatus');
+                this.timerStatusIndicator = document.getElementById('timerStatusIndicator');
+                this.statusText = document.getElementById('statusText');
+                this.timerDisplay = document.getElementById('timerDisplay');
+                this.timerProgress = document.getElementById('timerProgress');
+                this.startTimer = document.getElementById('startTimer');
+                this.pauseTimer = document.getElementById('pauseTimer');
+                this.resetTimer = document.getElementById('resetTimer');
+                this.focusTime = document.getElementById('focusTime');
+                this.breakTime = document.getElementById('breakTime');
+
+                this.timerUpgradeHint = document.getElementById('timerUpgradeHint');
+            }
+
+            bindEvents() {
+                this.addTaskBtn.addEventListener('click', () => this.showTaskInput());
+                this.taskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && this.taskInput.value.trim()) {
+                        this.addTask(this.taskInput.value.trim());
+                        this.hideTaskInput();
+                        this.taskAddedViaEnter = true;
+                    }
+                });
+                this.taskInput.addEventListener('blur', () => {
+                    if (this.taskInput.value.trim() && !this.taskAddedViaEnter) {
+                        this.addTask(this.taskInput.value.trim());
+                    }
+                    this.hideTaskInput();
+                    this.taskAddedViaEnter = false;
+                });
+                this.themeToggle.addEventListener('click', () => this.toggleTheme());
+                this.settingsBtn.addEventListener('click', () => this.showSettings());
+                this.closeSettings.addEventListener('click', () => this.hideSettings());
+                this.completedHeader.addEventListener('click', () => this.toggleCompletedSection());
+                
+                // Settings event listeners
+                this.autoHideSetting.addEventListener('change', () => this.updateSettings());
+                this.collapseCompletedToggle.addEventListener('click', () => this.toggleSetting('collapseCompleted'));
+                this.confettiToggle.addEventListener('click', () => this.toggleSetting('confetti'));
+                this.showStatsToggle.addEventListener('click', () => this.toggleSetting('showStats'));
+                
+                // Close modal when clicking outside
+                this.settingsModal.addEventListener('click', (e) => {
+                    if (e.target === this.settingsModal) {
+                        this.hideSettings();
+                    }
+                });
+
+                // Premium upgrade events
+                this.upgradeBanner.addEventListener('click', () => this.showPaymentModal());
+                this.purchaseBtn.addEventListener('click', () => this.purchasePremium());
+                this.cancelPurchase.addEventListener('click', () => this.hidePaymentModal());
+                this.paymentModal.addEventListener('click', (e) => {
+                    if (e.target === this.paymentModal) {
+                        this.hidePaymentModal();
+                    }
+                });
+
+                // Timer events
+                this.closeTimer.addEventListener('click', () => this.closeTimerPanel());
+                this.startTimer.addEventListener('click', () => this.startTimerCountdown());
+                this.pauseTimer.addEventListener('click', () => this.pauseTimerCountdown());
+                this.resetTimer.addEventListener('click', () => this.resetTimerCountdown());
+                this.focusTime.addEventListener('change', () => this.updateTimerSettings());
+                this.breakTime.addEventListener('change', () => this.updateTimerSettings());
+                
+                // Close timer upgrade hint when clicked
+                this.timerUpgradeHint.addEventListener('click', () => this.showPaymentModal());
+            }
+
+            showTaskInput() {
+                this.taskAddedViaEnter = false;
+                this.taskInput.style.display = 'block';
+                this.taskInput.value = '';
+                
+                // Trigger animation
+                setTimeout(() => {
+                    this.taskInput.classList.add('show');
+                    this.taskInput.focus();
+                }, 10);
+            }
+
+            hideTaskInput() {
+                this.taskInput.classList.remove('show');
+                setTimeout(() => {
+                    this.taskInput.style.display = 'none';
+                }, 400);
+            }
+
+            addTask(text, completed = false, id = null) {
+                const task = {
+                    id: id || this.nextId++,
+                    text: text,
+                    completed: completed,
+                    createdAt: new Date().toISOString(),
+                    totalWorkTime: 0, // Total focus time in minutes
+                    isNew: id === null // Only new tasks get the entrance animation
+                };
+                
+                this.tasks.push(task);
+                this.saveTasks();
+                this.renderTasks();
+            }
+
+            toggleTask(id) {
+                const task = this.tasks.find(t => t.id === id);
+                if (task) {
+                    task.completed = !task.completed;
+                    task.completedAt = task.completed ? new Date().toISOString() : null;
+                    
+                    if (task.completed) {
+                        this.animateTaskCompletion(id);
+                    }
+                    
+                    this.saveTasks();
+                    // Shorter timeout for free mode since there are no animations
+                    const timeout = task.completed ? (this.isPremium ? 1200 : 100) : 0;
+                    setTimeout(() => this.renderTasks(), timeout);
+                }
+            }
+
+            animateTaskCompletion(id) {
+                const taskElement = document.querySelector(`[data-task-id="${id}"]`);
+                if (taskElement) {
+                    // Only animate if premium
+                    if (this.isPremium) {
+                        // Step 1: Gentle glow
+                        taskElement.classList.add('completing');
+                        
+                        setTimeout(() => {
+                            // Step 2: Create ripple effect
+                            this.createRipple(taskElement);
+                            
+                            // Step 3: Create confetti effect (if enabled)
+                            if (this.settings.confetti) {
+                                this.createConfetti(taskElement);
+                            }
+                            
+                            // Step 4: Start removal animation
+                            taskElement.classList.add('removing');
+                            
+                            // Step 5: Animate remaining tasks
+                            setTimeout(() => {
+                                this.animateRemainingTasks(taskElement);
+                            }, 200);
+                            
+                        }, 300);
+                    } else {
+                        // Free mode: just add removing class immediately
+                        taskElement.classList.add('removing');
+                    }
+                }
+            }
+
+            createRipple(element) {
+                const rect = element.getBoundingClientRect();
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                
+                const size = Math.max(rect.width, rect.height) * 1.5;
+                ripple.style.width = size + 'px';
+                ripple.style.height = size + 'px';
+                ripple.style.left = (rect.left + rect.width / 2 - size / 2) + 'px';
+                ripple.style.top = (rect.top + rect.height / 2 - size / 2) + 'px';
+                
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 1000);
+            }
+
+            createConfetti(element) {
+                // Find the checkbox within the task element
+                const checkbox = element.querySelector('.task-checkbox');
+                if (!checkbox) return;
+                
+                const checkboxRect = checkbox.getBoundingClientRect();
+                const colors = ['#fed7d7', '#fce7f3', '#e0e7ff', '#dcfce7', '#fef3c7', '#ede9fe', '#fed7aa', '#d1fae5'];
+                
+                for (let i = 0; i < 12; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    // Random pastel color with slight transparency
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.background = color;
+                    confetti.style.boxShadow = `0 0 6px ${color}`;
+                    
+                    // Position around the checkbox center with random spread
+                    const angle = (i / 12) * 2 * Math.PI + (Math.random() - 0.5) * 0.5;
+                    const distance = 20 + Math.random() * 30; // Smaller spread since checkbox is smaller
+                    const checkboxCenterX = checkboxRect.left + checkboxRect.width / 2;
+                    const checkboxCenterY = checkboxRect.top + checkboxRect.height / 2;
+                    
+                    confetti.style.left = (checkboxCenterX + Math.cos(angle) * distance) + 'px';
+                    confetti.style.top = (checkboxCenterY + Math.sin(angle) * distance) + 'px';
+                    
+                    // Stagger the animation
+                    confetti.style.animationDelay = (Math.random() * 0.4) + 's';
+                    confetti.style.animationDuration = (1.2 + Math.random() * 0.6) + 's';
+                    
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 2000);
+                }
+            }
+
+            animateRemainingTasks(removedElement) {
+                // Find which list the removed element belongs to
+                const isInActiveList = this.taskList.contains(removedElement);
+                const targetList = isInActiveList ? this.taskList : this.completedList;
+                
+                // Animate remaining tasks in the same list
+                const allTasks = targetList.querySelectorAll('.task-item:not(.removing):not(.deleting)');
+                allTasks.forEach((task, index) => {
+                    task.classList.add('shifting');
+                    task.style.animationDelay = (index * 0.05) + 's';
+                    
+                    setTimeout(() => {
+                        task.classList.remove('shifting');
+                        task.style.animationDelay = '';
+                    }, 800 + (index * 50));
+                });
+            }
+
+            deleteTask(id) {
+                this.tasks = this.tasks.filter(t => t.id !== id);
+                this.saveTasks();
+                this.renderTasks();
+            }
+
+            deleteTaskWithAnimation(id) {
+                const taskElement = document.querySelector(`[data-task-id="${id}"]`);
+                if (taskElement) {
+                    if (this.isPremium) {
+                        // Premium: Smooth delete animation
+                        taskElement.classList.add('deleting');
+                        
+                        // Animate remaining tasks after deletion
+                        setTimeout(() => {
+                            this.animateRemainingTasks(taskElement);
+                        }, 200);
+                        
+                        // Remove from data after animation
+                        setTimeout(() => {
+                            this.deleteTask(id);
+                        }, 800);
+                    } else {
+                        // Free: Immediate removal
+                        this.deleteTask(id);
+                    }
+                }
+            }
+
+            moveTask(fromIndex, toIndex) {
+                const activeTasks = this.tasks.filter(t => !t.completed);
+                const [movedTask] = activeTasks.splice(fromIndex, 1);
+                activeTasks.splice(toIndex, 0, movedTask);
+                
+                // Rebuild tasks array with completed tasks at the end
+                const completedTasks = this.tasks.filter(t => t.completed);
+                this.tasks = [...activeTasks, ...completedTasks];
+                
+                this.saveTasks();
+                this.renderTasks();
+            }
+
+            renderTasks() {
+                const activeTasks = this.tasks.filter(t => !t.completed);
+                const completedTasks = this.tasks.filter(t => t.completed);
+                
+                this.renderTaskList(activeTasks, this.taskList, false);
+                this.renderTaskList(completedTasks, this.completedList, true);
+                
+                // Update empty state
+                this.emptyState.style.display = this.tasks.length === 0 ? 'block' : 'none';
+                
+                // Update completed section
+                if (completedTasks.length > 0) {
+                    this.completedSection.style.display = 'block';
+                    setTimeout(() => {
+                        this.completedSection.classList.add('show');
+                    }, 100);
+                } else {
+                    this.completedSection.classList.remove('show');
+                    setTimeout(() => {
+                        this.completedSection.style.display = 'none';
+                    }, 600);
+                }
+                
+                this.completedCount.textContent = `(${completedTasks.length})`;
+                this.updateStats();
+            }
+
+            renderTaskList(tasks, container, isCompleted) {
+                container.innerHTML = '';
+                
+                tasks.forEach((task, index) => {
+                    const li = this.createTaskElement(task, isCompleted ? null : index);
+                    container.appendChild(li);
+                    
+                    // Add entrance animation for new tasks
+                    if (!isCompleted && task.isNew) {
+                        li.classList.add('entering');
+                        setTimeout(() => {
+                            li.classList.remove('entering');
+                            task.isNew = false;
+                        }, 600);
+                    }
+                });
+            }
+
+            createTaskElement(task, dragIndex) {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed-task' : ''}`;
+                li.setAttribute('data-task-id', task.id);
+                
+                if (dragIndex !== null) {
+                    li.draggable = true;
+                    li.addEventListener('dragstart', (e) => this.handleDragStart(e, dragIndex));
+                    li.addEventListener('dragover', (e) => this.handleDragOver(e));
+                    li.addEventListener('drop', (e) => this.handleDrop(e, dragIndex));
+                    li.addEventListener('dragend', () => this.handleDragEnd());
+                }
+                
+                const taskActions = task.completed 
+                    ? `<div class="task-actions">
+                        <button class="undo-btn" data-task-id="${task.id}">↺</button>
+                        <button class="delete-btn" data-task-id="${task.id}">×</button>
+                       </div>`
+                    : `<div class="task-actions">
+                        <button class="delete-btn" data-task-id="${task.id}">×</button>
+                       </div>`;
+                
+                li.innerHTML = `
+                    <div class="task-content">
+                        ${dragIndex !== null ? '<span class="drag-handle">⋮⋮</span>' : ''}
+                        <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-task-id="${task.id}"></div>
+                        <span class="task-text">${this.escapeHtml(task.text)}</span>
+                        ${task.totalWorkTime > 0 ? `<span class="task-work-time">${this.formatWorkTime(task.totalWorkTime)}</span>` : ''}
+                        ${taskActions}
+                    </div>
+                `;
+                
+                // Add click handler for checkbox
+                const checkbox = li.querySelector('.task-checkbox');
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleTask(task.id);
+                });
+                
+                // Add undo button handler
+                const undoBtn = li.querySelector('.undo-btn');
+                if (undoBtn) {
+                    undoBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.undoTask(task.id);
+                    });
+                }
+                
+                // Add delete button handler
+                const deleteBtn = li.querySelector('.delete-btn');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.deleteTaskWithAnimation(task.id);
+                    });
+                }
+
+                // Add task click handler for timer (excluding buttons)
+                li.addEventListener('click', (e) => {
+                    // Ignore clicks on buttons and checkbox
+                    if (e.target.closest('.task-checkbox, .undo-btn, .delete-btn, .drag-handle')) {
+                        return;
+                    }
+                    
+                    e.stopPropagation();
+                    this.handleTaskClick(task);
+                });
+                
+                return li;
+            }
+
+            handleDragStart(e, index) {
+                this.draggedItem = { element: e.target, index: index };
+                e.target.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            }
+
+            handleDrop(e, targetIndex) {
+                e.preventDefault();
+                if (this.draggedItem && this.draggedItem.index !== targetIndex) {
+                    this.moveTask(this.draggedItem.index, targetIndex);
+                }
+            }
+
+            handleDragEnd() {
+                if (this.draggedItem) {
+                    this.draggedItem.element.classList.remove('dragging');
+                    this.draggedItem = null;
+                }
+            }
+
+            toggleCompletedSection() {
+                this.completedCollapsed = !this.completedCollapsed;
+                this.completedList.classList.toggle('collapsed', this.completedCollapsed);
+                this.completedToggle.classList.toggle('collapsed', this.completedCollapsed);
+            }
+
+            toggleTheme() {
+                const body = document.body;
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                body.setAttribute('data-theme', newTheme);
+                this.themeToggle.textContent = '◐';
+                
+                localStorage.setItem('theme', newTheme);
+            }
+
+            initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.body.setAttribute('data-theme', savedTheme);
+                this.themeToggle.textContent = '◐';
+            }
+
+            saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+                localStorage.setItem('nextId', this.nextId.toString());
+            }
+
+            loadTasks() {
+                const saved = localStorage.getItem('tasks');
+                const tasks = saved ? JSON.parse(saved) : [];
+                
+                // Add totalWorkTime field to existing tasks for backward compatibility
+                return tasks.map(task => ({
+                    ...task,
+                    totalWorkTime: task.totalWorkTime || 0
+                }));
+            }
+
+            getNextId() {
+                const saved = localStorage.getItem('nextId');
+                return saved ? parseInt(saved) : 1;
+            }
+
+            undoTask(id) {
+                const task = this.tasks.find(t => t.id === id);
+                if (task) {
+                    task.completed = false;
+                    task.completedAt = null;
+                    this.saveTasks();
+                    this.renderTasks();
+                }
+            }
+
+            showSettings() {
+                this.settingsModal.classList.add('show');
+                this.updateSettingsUI();
+            }
+
+            hideSettings() {
+                this.settingsModal.classList.remove('show');
+            }
+
+            updateSettingsUI() {
+                this.autoHideSetting.value = this.settings.autoHide || 'never';
+                this.collapseCompletedToggle.classList.toggle('active', this.settings.collapseCompleted);
+                this.confettiToggle.classList.toggle('active', this.settings.confetti);
+                this.showStatsToggle.classList.toggle('active', this.settings.showStats);
+                this.statsDisplay.style.display = this.settings.showStats ? 'block' : 'none';
+            }
+
+            toggleSetting(setting) {
+                this.settings[setting] = !this.settings[setting];
+                this.saveSettings();
+                this.updateSettingsUI();
+                
+                if (setting === 'collapseCompleted') {
+                    this.completedCollapsed = this.settings.collapseCompleted;
+                    this.completedList.classList.toggle('collapsed', this.completedCollapsed);
+                    this.completedToggle.classList.toggle('collapsed', this.completedCollapsed);
+                }
+            }
+
+            updateSettings() {
+                this.settings.autoHide = this.autoHideSetting.value;
+                this.saveSettings();
+            }
+
+            loadSettings() {
+                const saved = localStorage.getItem('settings');
+                return saved ? JSON.parse(saved) : {
+                    autoHide: 'never',
+                    collapseCompleted: true,
+                    confetti: true,
+                    showStats: true
+                };
+            }
+
+            saveSettings() {
+                localStorage.setItem('settings', JSON.stringify(this.settings));
+            }
+
+            updateStats() {
+                if (!this.settings.showStats) return;
+                
+                const today = new Date().toDateString();
+                const todayCompleted = this.tasks.filter(t => 
+                    t.completed && t.completedAt && 
+                    new Date(t.completedAt).toDateString() === today
+                ).length;
+                
+                this.todayCompleted.textContent = todayCompleted;
+            }
+
+            // Premium State Management
+            initializePremiumState() {
+                document.body.setAttribute('data-premium', this.isPremium.toString());
+                this.upgradeBanner.classList.toggle('hidden', this.isPremium);
+            }
+
+            loadPremiumStatus() {
+                // Start with free mode by default for demo
+                const saved = localStorage.getItem('isPremium');
+                return saved ? JSON.parse(saved) : false;
+            }
+
+            savePremiumStatus() {
+                localStorage.setItem('isPremium', JSON.stringify(this.isPremium));
+            }
+
+            showPaymentModal() {
+                this.paymentModal.classList.add('show');
+            }
+
+            hidePaymentModal() {
+                this.paymentModal.classList.remove('show');
+            }
+
+            purchasePremium() {
+                // Mock purchase success
+                this.isPremium = true;
+                this.savePremiumStatus();
+                this.initializePremiumState();
+                this.hidePaymentModal();
+                
+                // Show success message
+                this.showPurchaseSuccess();
+            }
+
+            showPurchaseSuccess() {
+                // Create temporary success message
+                const successBanner = document.createElement('div');
+                successBanner.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+                    z-index: 1002;
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                `;
+                successBanner.textContent = '🎉 Welcome to Premium Lumin! Enjoy the full experience!';
+                
+                document.body.appendChild(successBanner);
+                
+                setTimeout(() => {
+                    successBanner.style.opacity = '1';
+                    successBanner.style.transform = 'translateX(-50%) translateY(0)';
+                }, 100);
+                
+                setTimeout(() => {
+                    successBanner.style.opacity = '0';
+                    successBanner.style.transform = 'translateX(-50%) translateY(-20px)';
+                    setTimeout(() => successBanner.remove(), 300);
+                }, 3000);
+            }
+
+            // Timer Methods
+            handleTaskClick(task) {
+                if (!this.isPremium) {
+                    this.showTimerUpgradeHint();
+                    return;
+                }
+
+                // Toggle timer panel if same task clicked
+                if (this.selectedTask && this.selectedTask.id === task.id && this.timerActive) {
+                    this.closeTimerPanel();
+                } else {
+                    this.showTimerPanel(task);
+                }
+            }
+
+            showTimerUpgradeHint() {
+                this.timerUpgradeHint.classList.add('show');
+                setTimeout(() => {
+                    this.timerUpgradeHint.classList.remove('show');
+                }, 3000);
+            }
+
+            showTimerPanel(task) {
+                this.selectedTask = task;
+                this.timerActive = true;
+                this.container.classList.add('timer-active');
+                this.timerPanel.classList.add('active');
+                
+                // Update task display
+                this.timerTaskName.textContent = task.text;
+                this.timerTaskStatus.textContent = task.completed ? 'Completed' : 'Ready to focus';
+                
+                // Reset timer if not running
+                if (!this.timerRunning) {
+                    this.resetTimerCountdown();
+                }
+                
+                // Update status indicator
+                this.updateStatusIndicator();
+            }
+
+            closeTimerPanel() {
+                this.timerActive = false;
+                this.container.classList.remove('timer-active');
+                this.timerPanel.classList.remove('active');
+                
+                // Clear timer if running
+                if (this.timerRunning) {
+                    this.pauseTimerCountdown();
+                }
+            }
+
+            startTimerCountdown() {
+                if (this.timerRunning) return;
+                
+                this.timerRunning = true;
+                this.startTimer.style.display = 'none';
+                this.pauseTimer.style.display = 'flex';
+                this.timerTaskStatus.textContent = 'Focusing now...';
+                this.timerStatusIndicator.classList.remove('paused');
+                
+                // Update status indicator
+                this.updateStatusIndicator();
+                
+                this.timerInterval = setInterval(() => {
+                    this.timerTime--;
+                    this.updateTimerDisplay();
+                    this.updateTimerProgress();
+                    this.updateStatusIndicator();
+                    
+                    if (this.timerTime <= 0) {
+                        this.completeTimer();
+                    }
+                }, 1000);
+            }
+
+            pauseTimerCountdown() {
+                if (!this.timerRunning) return;
+                
+                this.timerRunning = false;
+                this.startTimer.style.display = 'flex';
+                this.pauseTimer.style.display = 'none';
+                this.timerTaskStatus.textContent = 'Paused';
+                this.timerStatusIndicator.classList.add('paused');
+                
+                // Update status indicator
+                this.updateStatusIndicator();
+                
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            resetTimerCountdown() {
+                this.pauseTimerCountdown();
+                
+                const focusMinutes = parseInt(this.focusTime.value) || 25;
+                this.timerTime = focusMinutes * 60;
+                this.timerTaskStatus.textContent = 'Ready to start';
+                this.timerStatusIndicator.classList.add('paused');
+                
+                this.updateTimerDisplay();
+                this.updateTimerProgress();
+                this.updateStatusIndicator();
+            }
+
+            completeTimer() {
+                this.pauseTimerCountdown();
+                this.timerTaskStatus.textContent = '🎉 Focus session complete!';
+                
+                // Add completed session time to task's total work time
+                if (this.selectedTask) {
+                    const sessionMinutes = parseInt(this.focusTime.value) || 25;
+                    this.selectedTask.totalWorkTime = (this.selectedTask.totalWorkTime || 0) + sessionMinutes;
+                    this.saveTasks();
+                    this.renderTasks();
+                }
+                
+                // Mark task as completed if it wasn't already
+                if (this.selectedTask && !this.selectedTask.completed) {
+                    this.toggleTask(this.selectedTask.id);
+                }
+                
+                // Show celebration effect
+                this.showTimerCompletionEffect();
+                
+                // Auto-close timer after a moment
+                setTimeout(() => {
+                    this.closeTimerPanel();
+                }, 2000);
+            }
+
+            showTimerCompletionEffect() {
+                // Create celebration confetti from timer circle
+                const rect = this.timerPanel.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const colors = ['#fef3c7', '#fce7f3', '#e0e7ff', '#dcfce7', '#fed7d7'];
+                
+                for (let i = 0; i < 20; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = centerX + 'px';
+                    confetti.style.top = centerY + 'px';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '1001';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    const angle = (i / 20) * 2 * Math.PI;
+                    const distance = 50 + Math.random() * 100;
+                    
+                    setTimeout(() => {
+                        confetti.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`;
+                        confetti.style.opacity = '0';
+                        confetti.style.transition = 'all 1s ease-out';
+                        setTimeout(() => confetti.remove(), 1000);
+                    }, 100);
+                }
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timerTime / 60);
+                const seconds = this.timerTime % 60;
+                this.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            updateTimerProgress() {
+                const focusMinutes = parseInt(this.focusTime.value) || 25;
+                const totalTime = focusMinutes * 60;
+                const progress = (totalTime - this.timerTime) / totalTime;
+                const circumference = 2 * Math.PI * 90; // r = 90
+                const offset = circumference - (progress * circumference);
+                
+                this.timerProgress.style.strokeDashoffset = offset;
+                
+                // Add subtle pulsing effect when timer is running
+                if (this.timerRunning) {
+                    this.timerProgress.style.filter = 'drop-shadow(0 0 8px rgba(168, 85, 247, 0.5))';
+                } else {
+                    this.timerProgress.style.filter = 'none';
+                }
+            }
+
+            updateTimerSettings() {
+                if (!this.timerRunning) {
+                    const focusMinutes = parseInt(this.focusTime.value) || 25;
+                    this.timerTime = focusMinutes * 60;
+                    this.updateTimerDisplay();
+                    this.updateTimerProgress();
+                    this.updateStatusIndicator();
+                }
+            }
+
+            updateStatusIndicator() {
+                const minutes = Math.floor(this.timerTime / 60);
+                const seconds = this.timerTime % 60;
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (this.timerRunning) {
+                    this.statusText.textContent = `● Focus Mode: ${timeString} remaining`;
+                } else if (this.timerTime < (parseInt(this.focusTime.value) || 25) * 60) {
+                    this.statusText.textContent = `⏸ Paused: ${timeString} remaining`;
+                } else {
+                    this.statusText.textContent = `○ Ready to focus: ${timeString}`;
+                }
+            }
+
+
+
+            formatWorkTime(minutes) {
+                if (minutes < 60) {
+                    return `${minutes}m`;
+                } else {
+                    const hours = Math.floor(minutes / 60);
+                    const remainingMinutes = minutes % 60;
+                    if (remainingMinutes === 0) {
+                        return `${hours}h`;
+                    } else {
+                        return `${hours}h ${remainingMinutes}m`;
+                    }
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new TaskManager();
+        });
+    </script>
+</body>
+</html>
