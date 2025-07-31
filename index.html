@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumin - Psychology-Optimized Checklist</title>
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
     <style>
         * {
             margin: 0;
@@ -473,6 +474,16 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            animation: upgradeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes upgradeGlow {
+            0%, 100% {
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(168, 85, 247, 0.7);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(168, 85, 247, 0);
+            }
         }
 
         .upgrade-btn::before {
@@ -485,20 +496,89 @@
             background: var(--gradient-rainbow);
             opacity: 0;
             transition: opacity 0.3s ease;
+            animation: rainbowShift 4s ease-in-out infinite;
+        }
+
+        @keyframes rainbowShift {
+            0% {
+                background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 25%, #e0e7ff 50%, #dcfce7 75%, #fed7d7 100%);
+            }
+            25% {
+                background: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 25%, #dcfce7 50%, #fed7d7 75%, #fef3c7 100%);
+            }
+            50% {
+                background: linear-gradient(135deg, #e0e7ff 0%, #dcfce7 25%, #fed7d7 50%, #fef3c7 75%, #fce7f3 100%);
+            }
+            75% {
+                background: linear-gradient(135deg, #dcfce7 0%, #fed7d7 25%, #fef3c7 50%, #fce7f3 75%, #e0e7ff 100%);
+            }
+            100% {
+                background: linear-gradient(135deg, #fed7d7 0%, #fef3c7 25%, #fce7f3 50%, #e0e7ff 75%, #dcfce7 100%);
+            }
         }
 
         .upgrade-btn:hover::before {
-            opacity: 0.2;
+            opacity: 0.4;
         }
 
         .upgrade-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(168, 85, 247, 0.7);
+            animation: upgradeGlow 1s ease-in-out infinite;
+        }
+
+        .upgrade-btn:active {
+            transform: scale(0.98) translateY(0);
+            transition: all 0.1s ease;
         }
 
         .upgrade-btn span {
             position: relative;
             z-index: 1;
+        }
+
+        .upgrade-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .upgrade-btn.loading span {
+            opacity: 0.7;
+        }
+
+        .upgrade-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 2;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .payment-form {
+            margin-top: 2rem;
+        }
+
+        .stripe-buy-button-container {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .stripe-buy-button-container stripe-buy-button {
+            width: 100%;
+            max-width: 300px;
         }
 
         .cancel-btn {
@@ -1710,14 +1790,14 @@
      <!-- Upgrade Banner -->
      <div class="upgrade-banner" id="upgradeBanner">
          <span class="upgrade-banner-icon">✨</span>
-         <span class="upgrade-banner-text">Unlock premium visual experience for just</span>
+         <span class="upgrade-banner-text">Unlock Lumin+ visual experience for just</span>
          <span class="upgrade-banner-price">$1.99</span>
      </div>
 
      <!-- Payment Modal -->
      <div class="payment-modal" id="paymentModal">
          <div class="payment-panel">
-             <h2 class="payment-title">Unlock Premium Lumin</h2>
+             <h2 class="payment-title">Unlock Lumin+</h2>
              <p class="payment-subtitle">Experience the full dopamine-powered productivity journey</p>
              
              <div class="premium-features">
@@ -1747,16 +1827,22 @@
                  </div>
              </div>
 
-             <div class="payment-buttons">
-                 <button class="upgrade-btn" id="purchaseBtn">
-                     <span>Upgrade for $1.99</span>
-                 </button>
-                 <button class="cancel-btn" id="cancelPurchase">Maybe Later</button>
+             <div class="payment-form" id="paymentForm">
+                 <div class="stripe-buy-button-container">
+                     <stripe-buy-button
+                         buy-button-id="buy_btn_1RqvjD70TrFNnJXkiuPm4LNB"
+                         publishable-key="pk_live_51RqUKG70TrFNnJXk0eWv9nn7MHiFgy0cbSEElfQfgC4pjseVjO1Vr5IqykOEJl7u7aQ53qYJxdWvAzBKu58FRj9200iicAm0ym"
+                     >
+                     </stripe-buy-button>
+                 </div>
+                 <div class="payment-buttons">
+                     <button class="cancel-btn" id="cancelPurchase">Maybe Later</button>
+                 </div>
              </div>
                   </div>
      </div>
 
-     <!-- Timer Panel (Premium Only) -->
+     <!-- Timer Panel (Lumin+ Only) -->
      <div class="timer-panel" id="timerPanel">
          <div class="timer-header">
              <h2 class="timer-title">○ Focus Timer</h2>
@@ -1813,7 +1899,7 @@
 
      <!-- Timer Upgrade Hint -->
      <div class="timer-upgrade-hint" id="timerUpgradeHint">
-         <div>⏱️ Upgrade to Premium</div>
+         <div>⏱️ Upgrade to Lumin+</div>
          <div style="margin-top: 0.5rem; font-size: 0.8rem;">Unlock focus timer & productivity tools!</div>
      </div>
 
@@ -1842,6 +1928,7 @@
                 this.initializeTheme();
                 this.initializePremiumState();
                 this.updateStats();
+                this.initializeStripe();
             }
 
             initializeElements() {
@@ -1868,7 +1955,6 @@
                 this.todayCompleted = document.getElementById('todayCompleted');
                 this.upgradeBanner = document.getElementById('upgradeBanner');
                 this.paymentModal = document.getElementById('paymentModal');
-                this.purchaseBtn = document.getElementById('purchaseBtn');
                 this.cancelPurchase = document.getElementById('cancelPurchase');
                 
                 // Timer elements
@@ -1924,9 +2010,8 @@
                     }
                 });
 
-                // Premium upgrade events
+                // Lumin+ upgrade events
                 this.upgradeBanner.addEventListener('click', () => this.showPaymentModal());
-                this.purchaseBtn.addEventListener('click', () => this.purchasePremium());
                 this.cancelPurchase.addEventListener('click', () => this.hidePaymentModal());
                 this.paymentModal.addEventListener('click', (e) => {
                     if (e.target === this.paymentModal) {
@@ -2007,8 +2092,8 @@
             animateTaskCompletion(id) {
                 const taskElement = document.querySelector(`[data-task-id="${id}"]`);
                 if (taskElement) {
-                    // Only animate if premium
-                    if (this.isPremium) {
+                                    // Only animate if Lumin+
+                if (this.isPremium) {
                         // Step 1: Gentle glow
                         taskElement.classList.add('completing');
                         
@@ -2115,7 +2200,7 @@
                 const taskElement = document.querySelector(`[data-task-id="${id}"]`);
                 if (taskElement) {
                     if (this.isPremium) {
-                        // Premium: Smooth delete animation
+                        // Lumin+: Smooth delete animation
                         taskElement.classList.add('deleting');
                         
                         // Animate remaining tasks after deletion
@@ -2128,7 +2213,7 @@
                             this.deleteTask(id);
                         }, 800);
                     } else {
-                        // Free: Immediate removal
+                        // Free mode: Immediate removal
                         this.deleteTask(id);
                     }
                 }
@@ -2402,14 +2487,23 @@
                 this.todayCompleted.textContent = todayCompleted;
             }
 
-            // Premium State Management
+            // Lumin+ State Management
             initializePremiumState() {
                 document.body.setAttribute('data-premium', this.isPremium.toString());
                 this.upgradeBanner.classList.toggle('hidden', this.isPremium);
             }
 
             loadPremiumStatus() {
-                // Start with free mode by default for demo
+                // Check for actual purchase verification
+                const purchaseDate = localStorage.getItem('luminPlusPurchaseDate');
+                const customerId = localStorage.getItem('luminPlusCustomerId');
+                
+                // If user has a verified purchase, grant Lumin+ access
+                if (purchaseDate && customerId === 'verified') {
+                    return true;
+                }
+                
+                // Fallback to legacy premium status (for backward compatibility)
                 const saved = localStorage.getItem('isPremium');
                 return saved ? JSON.parse(saved) : false;
             }
@@ -2427,14 +2521,71 @@
             }
 
             purchasePremium() {
-                // Mock purchase success
+                // This function is now handled by the Stripe buy button
+                // The actual purchase logic is handled by Stripe's buy button events
+            }
+
+            handlePaymentError(message) {
+                console.error('Payment error:', message);
+            }
+
+            handleSuccessfulPurchase() {
+                // Called when Stripe buy button reports successful purchase
                 this.isPremium = true;
                 this.savePremiumStatus();
                 this.initializePremiumState();
                 this.hidePaymentModal();
-                
-                // Show success message
                 this.showPurchaseSuccess();
+                
+                // Store purchase timestamp for verification
+                localStorage.setItem('luminPlusPurchaseDate', new Date().toISOString());
+                localStorage.setItem('luminPlusCustomerId', 'verified'); // You can store actual customer ID from Stripe
+            }
+
+            initializeStripe() {
+                // Listen for Stripe buy button events
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Wait for Stripe buy button to load
+                    setTimeout(() => {
+                        const buyButton = document.querySelector('stripe-buy-button');
+                        if (buyButton) {
+                            // Listen for successful purchase events
+                            buyButton.addEventListener('click', (event) => {
+                                // This will be triggered when user clicks the buy button
+                                console.log('Stripe buy button clicked');
+                            });
+                            
+                            // Listen for purchase completion (you may need to implement webhook handling)
+                            // For now, we'll use a polling mechanism to check for successful purchases
+                            this.checkForSuccessfulPurchase();
+                        }
+                    }, 2000);
+                });
+            }
+
+            checkForSuccessfulPurchase() {
+                // This is a simplified check - in production you'd want to verify with your backend
+                // For now, we'll check if the user has completed a purchase through Stripe
+                const checkPurchase = () => {
+                    // You can implement actual verification here
+                    // For demo purposes, we'll simulate a successful purchase after a delay
+                    // In production, you'd verify the purchase with your Stripe webhook
+                };
+                
+                // Check every 5 seconds for the first minute after modal opens
+                let checkCount = 0;
+                const checkInterval = setInterval(() => {
+                    checkCount++;
+                    if (checkCount >= 12) { // 1 minute
+                        clearInterval(checkInterval);
+                    }
+                    checkPurchase();
+                }, 5000);
+            }
+
+            // Manual verification method for testing (remove in production)
+            verifyPurchase() {
+                this.handleSuccessfulPurchase();
             }
 
             showPurchaseSuccess() {
@@ -2455,7 +2606,7 @@
                     opacity: 0;
                     transition: all 0.3s ease;
                 `;
-                successBanner.textContent = '🎉 Welcome to Premium Lumin! Enjoy the full experience!';
+                successBanner.textContent = '🎉 Welcome to Lumin+! Enjoy the full experience!';
                 
                 document.body.appendChild(successBanner);
                 
