@@ -2507,13 +2507,44 @@
             }
 
             initializeStripeButton() {
-                // Check if Stripe script is loaded
-                if (typeof window.StripeCheckout !== 'undefined' || document.querySelector('stripe-buy-button')) {
-                    console.log('Stripe button should be ready');
+                // Check if Stripe script is loaded and button is ready
+                const stripeBuyButton = document.querySelector('stripe-buy-button');
+                if (stripeBuyButton && stripeBuyButton.tagName === 'STRIPE-BUY-BUTTON') {
+                    console.log('Stripe button is ready, setting up event listeners');
+                    this.setupStripeEventListeners(stripeBuyButton);
                 } else {
-                    console.log('Stripe script not yet loaded, retrying...');
+                    console.log('Stripe script/button not yet ready, retrying...');
                     setTimeout(() => this.initializeStripeButton(), 500);
                 }
+            }
+
+            setupStripeEventListeners(stripeBuyButton) {
+                // Remove any existing listeners to prevent duplicates
+                stripeBuyButton.removeEventListener('success', this.stripeSuccessHandler);
+                stripeBuyButton.removeEventListener('error', this.stripeErrorHandler);
+                stripeBuyButton.removeEventListener('cancel', this.stripeCancelHandler);
+
+                // Create bound handlers to preserve 'this' context
+                this.stripeSuccessHandler = (event) => {
+                    console.log('Stripe purchase successful:', event);
+                    this.handleSuccessfulPurchase();
+                };
+
+                this.stripeErrorHandler = (event) => {
+                    console.error('Stripe payment error:', event);
+                    this.handlePaymentError('Payment failed. Please try again.');
+                };
+
+                this.stripeCancelHandler = (event) => {
+                    console.log('Stripe payment cancelled:', event);
+                };
+
+                // Add event listeners
+                stripeBuyButton.addEventListener('success', this.stripeSuccessHandler);
+                stripeBuyButton.addEventListener('error', this.stripeErrorHandler);
+                stripeBuyButton.addEventListener('cancel', this.stripeCancelHandler);
+                
+                console.log('Stripe buy button event listeners successfully attached');
             }
 
             hidePaymentModal() {
@@ -2531,18 +2562,30 @@
 
             handleSuccessfulPurchase() {
                 // Called when Stripe buy button reports successful purchase
+                console.log('Processing successful purchase...');
+                
                 this.isPremium = true;
                 this.savePremiumStatus();
-                this.initializePremiumState();
-                this.hidePaymentModal();
-                this.showPurchaseSuccess();
                 
                 // Store purchase timestamp for verification
                 localStorage.setItem('luminPlusPurchaseDate', new Date().toISOString());
                 localStorage.setItem('luminPlusCustomerId', 'verified');
                 
+                // Verify the status was saved correctly
+                const verifyStatus = this.loadPremiumStatus();
+                if (!verifyStatus) {
+                    console.error('Premium status not saved correctly, retrying...');
+                    setTimeout(() => this.savePremiumStatus(), 100);
+                }
+                
+                this.initializePremiumState();
+                this.hidePaymentModal();
+                this.showPurchaseSuccess();
+                
                 // Refresh the entire UI to show premium features
                 this.refreshUIForPremium();
+                
+                console.log('Purchase processing complete - Premium activated!');
             }
 
             refreshUIForPremium() {
@@ -2560,9 +2603,8 @@
             }
 
             initializeStripe() {
-                // Let Stripe handle its own button functionality
-                // The buy button should work automatically without additional event listeners
-                console.log('Stripe buy button initialized');
+                // Initialize Stripe buy button event listeners
+                this.initializeStripeButton();
             }
 
             checkForPurchaseCompletion() {
@@ -2586,7 +2628,20 @@
 
             // Manual verification method for testing (remove in production)
             verifyPurchase() {
+                console.log('Manually triggering purchase verification...');
                 this.handleSuccessfulPurchase();
+            }
+
+            // Check if premium features are working correctly
+            testPremiumFeatures() {
+                console.log('Testing premium features...');
+                console.log('Premium status:', this.isPremium);
+                console.log('LocalStorage isLuminPlus:', localStorage.getItem('isLuminPlus'));
+                console.log('LocalStorage purchaseDate:', localStorage.getItem('luminPlusPurchaseDate'));
+                console.log('LocalStorage customerId:', localStorage.getItem('luminPlusCustomerId'));
+                console.log('Body data-premium attribute:', document.body.getAttribute('data-premium'));
+                console.log('Upgrade banner hidden:', this.upgradeBanner.classList.contains('hidden'));
+                return this.isPremium;
             }
 
             // Dev mode: Unlock premium for testing (remove in production)
