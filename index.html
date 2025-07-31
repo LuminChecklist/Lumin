@@ -402,9 +402,9 @@
             background: var(--bg-primary);
             border-radius: 24px;
             padding: 2.5rem;
-            max-width: 640px;
+            max-width: 600px;
             width: 90%;
-            max-height: 80vh;
+            min-height: 85vh;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
             transform: scale(0.9) translateY(20px);
@@ -413,6 +413,9 @@
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .payment-panel::before {
@@ -431,13 +434,23 @@
             transform: scale(1) translateY(0);
         }
 
-        .payment-title {
-            font-size: 1.6rem;
-            font-weight: 700;
+        .payment-price {
+            font-size: 3.5rem;
+            font-weight: 800;
             background: var(--gradient-rainbow);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            line-height: 1;
+        }
+
+        .payment-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
             margin-bottom: 0.75rem;
             position: relative;
             z-index: 1;
@@ -491,27 +504,11 @@
             line-height: 1.3;
         }
 
-        .payment-price {
-            text-align: center;
-            margin: 2rem 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .price-amount {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--gradient-rainbow);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
         .price-description {
             color: var(--text-secondary);
             font-size: 0.9rem;
             font-weight: 500;
+            margin-bottom: 2rem;
         }
 
         .payment-buttons {
@@ -570,12 +567,13 @@
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: 8px;
+            margin-top: 1rem;
         }
 
         .cancel-btn:hover {
@@ -596,7 +594,7 @@
         }
 
         .stripe-buy-button-container {
-            margin-bottom: 1rem;
+            margin: 2rem 0 1rem 0;
             display: flex;
             justify-content: center;
         }
@@ -611,13 +609,17 @@
             .payment-panel {
                 max-width: 480px;
                 padding: 2rem;
-                max-height: 85vh;
+                min-height: 85vh;
             }
             
             .premium-features {
                 grid-template-columns: 1fr;
                 gap: 0.75rem;
                 padding: 1.25rem;
+            }
+            
+            .payment-price {
+                font-size: 3rem;
             }
             
             .payment-title {
@@ -1834,6 +1836,7 @@
      <!-- Payment Modal -->
      <div class="payment-modal" id="paymentModal">
          <div class="payment-panel">
+             <div class="payment-price">$2.99</div>
              <h2 class="payment-title">Turn your tasks into dopamine</h2>
              <p class="payment-subtitle">Experience the full dopamine-powered productivity journey</p>
              
@@ -1862,10 +1865,6 @@
                      <span class="feature-icon">🎵</span>
                      <span class="feature-text">Sounds (coming soon)</span>
                  </div>
-             </div>
-
-             <div class="payment-price">
-                 <div class="price-description">One-time unlock. No subscriptions.</div>
              </div>
 
              <div class="payment-form" id="paymentForm">
