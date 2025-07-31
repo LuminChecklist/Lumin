@@ -602,6 +602,8 @@
         .stripe-buy-button-container stripe-buy-button {
             width: 100%;
             max-width: 300px;
+            display: block;
+            margin: 0 auto;
         }
 
         /* Responsive design for mobile */
@@ -1870,8 +1872,8 @@
              <div class="payment-form" id="paymentForm">
                  <div class="stripe-buy-button-container">
                      <stripe-buy-button
-                         buy-button-id="buy_btn_1RqvjD70TrFNnJXkiuPm4LNB"
-                         publishable-key="pk_live_51RqUKG70TrFNnJXk0eWv9nn7MHiFgy0cbSEElfQfgC4pjseVjO1Vr5IqykOEJl7u7aQ53qYJxdWvAzBKu58FRj9200iicAm0ym"
+                       buy-button-id="buy_btn_1RqvjD70TrFNnJXkiuPm4LNB"
+                       publishable-key="pk_live_51RqUKG70TrFNnJXk0eWv9nn7MHiFgy0cbSEElfQfgC4pjseVjO1Vr5IqykOEJl7u7aQ53qYJxdWvAzBKu58FRj9200iicAm0ym"
                      >
                      </stripe-buy-button>
                  </div>
@@ -2584,44 +2586,14 @@
             }
 
             initializeStripe() {
-                // Listen for Stripe buy button events
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Wait for Stripe buy button to load
-                    setTimeout(() => {
-                        const buyButton = document.querySelector('stripe-buy-button');
-                        if (buyButton) {
-                            // Listen for successful purchase events
-                            buyButton.addEventListener('click', (event) => {
-                                // This will be triggered when user clicks the buy button
-                                console.log('Stripe buy button clicked');
-                            });
-                            
-                            // Listen for purchase completion (you may need to implement webhook handling)
-                            // For now, we'll use a polling mechanism to check for successful purchases
-                            this.checkForSuccessfulPurchase();
-                        }
-                    }, 2000);
-                });
+                // Let Stripe handle its own button functionality
+                // The buy button should work automatically without additional event listeners
+                console.log('Stripe buy button initialized');
             }
 
             checkForSuccessfulPurchase() {
-                // This is a simplified check - in production you'd want to verify with your backend
-                // For now, we'll check if the user has completed a purchase through Stripe
-                const checkPurchase = () => {
-                    // You can implement actual verification here
-                    // For demo purposes, we'll simulate a successful purchase after a delay
-                    // In production, you'd verify the purchase with your Stripe webhook
-                };
-                
-                // Check every 5 seconds for the first minute after modal opens
-                let checkCount = 0;
-                const checkInterval = setInterval(() => {
-                    checkCount++;
-                    if (checkCount >= 12) { // 1 minute
-                        clearInterval(checkInterval);
-                    }
-                    checkPurchase();
-                }, 5000);
+                // This function is no longer needed as we're letting Stripe handle everything
+                console.log('Purchase verification handled by Stripe');
             }
 
             // Manual verification method for testing (remove in production)
