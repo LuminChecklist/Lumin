@@ -1927,6 +1927,7 @@
                 this.initializePremiumState();
                 this.updateStats();
                 this.initializeStripe();
+                this.checkForPurchaseCompletion();
             }
 
             initializeElements() {
@@ -2475,22 +2476,25 @@
             }
 
             loadPremiumStatus() {
-                // Check for actual purchase verification
+                // Check for Lumin+ purchase flag
+                const isLuminPlus = localStorage.getItem('isLuminPlus') === 'true';
+                
+                // Legacy check for backward compatibility
                 const purchaseDate = localStorage.getItem('luminPlusPurchaseDate');
                 const customerId = localStorage.getItem('luminPlusCustomerId');
                 
-                // If user has a verified purchase, grant Lumin+ access
-                if (purchaseDate && customerId === 'verified') {
+                if (isLuminPlus || (purchaseDate && customerId === 'verified')) {
                     return true;
                 }
                 
-                // Fallback to legacy premium status (for backward compatibility)
+                // Fallback to legacy premium status
                 const saved = localStorage.getItem('isPremium');
                 return saved ? JSON.parse(saved) : false;
             }
 
             savePremiumStatus() {
                 localStorage.setItem('isPremium', JSON.stringify(this.isPremium));
+                localStorage.setItem('isLuminPlus', 'true');
             }
 
             showPaymentModal() {
@@ -2535,13 +2539,44 @@
                 
                 // Store purchase timestamp for verification
                 localStorage.setItem('luminPlusPurchaseDate', new Date().toISOString());
-                localStorage.setItem('luminPlusCustomerId', 'verified'); // You can store actual customer ID from Stripe
+                localStorage.setItem('luminPlusCustomerId', 'verified');
+                
+                // Refresh the entire UI to show premium features
+                this.refreshUIForPremium();
+            }
+
+            refreshUIForPremium() {
+                // Re-render tasks with premium animations
+                this.renderTasks();
+                
+                // Update body attribute
+                document.body.setAttribute('data-premium', 'true');
+                
+                // Hide upgrade banner
+                this.upgradeBanner.classList.add('hidden');
+                
+                // Update any other UI elements that depend on premium status
+                console.log('UI refreshed for premium user');
             }
 
             initializeStripe() {
                 // Let Stripe handle its own button functionality
                 // The buy button should work automatically without additional event listeners
                 console.log('Stripe buy button initialized');
+            }
+
+            checkForPurchaseCompletion() {
+                // Check URL parameters for successful purchase
+                const urlParams = new URLSearchParams(window.location.search);
+                const paymentSuccess = urlParams.get('payment_success');
+                const sessionId = urlParams.get('session_id');
+                
+                if (paymentSuccess === 'true' || sessionId) {
+                    console.log('Payment success detected!');
+                    this.handleSuccessfulPurchase();
+                    // Clean up URL parameters
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
             }
 
             checkForSuccessfulPurchase() {
@@ -2552,6 +2587,15 @@
             // Manual verification method for testing (remove in production)
             verifyPurchase() {
                 this.handleSuccessfulPurchase();
+            }
+
+            // Dev mode: Unlock premium for testing (remove in production)
+            unlockPremiumForTesting() {
+                localStorage.setItem('isLuminPlus', 'true');
+                this.isPremium = true;
+                this.initializePremiumState();
+                this.showPurchaseSuccess();
+                console.log('DEV MODE: Premium unlocked for testing');
             }
 
             showPurchaseSuccess() {
@@ -2828,8 +2872,12 @@
 
         // Initialize the app when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new TaskManager();
+            window.taskManager = new TaskManager();
         });
+
+        // DEV MODE: To test premium features without paying, open browser console and run:
+        // taskManager.unlockPremiumForTesting()
+        // This will set localStorage.setItem('isLuminPlus', 'true') and unlock all premium features
     </script>
 </body>
 </html>
