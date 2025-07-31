@@ -13,14 +13,14 @@
         }
 
         :root {
-            /* Light mode colors */
-            --bg-primary: #ffffff;
-            --bg-secondary: #fafafa;
-            --text-primary: #374151;
-            --text-secondary: #6b7280;
-            --text-muted: #9ca3af;
-            --border-color: #e5e7eb;
-            --shadow-color: rgba(0, 0, 0, 0.1);
+            /* Dark mode colors (default and only theme) */
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border-color: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.3);
             
             /* Premium: Pastel rainbow gradient */
             --gradient-rainbow: linear-gradient(135deg, 
@@ -31,13 +31,13 @@
                 #fed7d7 100%  /* soft coral */
             );
             
-            /* Free: Grayscale gradient */
+            /* Free: Grayscale gradient for dark mode */
             --gradient-grayscale: linear-gradient(135deg, 
-                #f3f4f6 0%,
-                #e5e7eb 25%,
-                #d1d5db 50%,
-                #9ca3af 75%,
-                #6b7280 100%
+                #2d2d2d 0%,
+                #3a3a3a 25%,
+                #4a4a4a 50%,
+                #5a5a5a 75%,
+                #6a6a6a 100%
             );
             
             /* Individual pastel colors */
@@ -56,34 +56,11 @@
             --premium-glow: rgba(168, 85, 247, 0.4);
         }
 
-        [data-theme="dark"] {
-            --bg-primary: #000000;
-            --bg-secondary: #1a1a1a;
-            --text-primary: rgba(255, 255, 255, 0.9);
-            --text-secondary: rgba(255, 255, 255, 0.7);
-            --text-muted: rgba(255, 255, 255, 0.5);
-            --border-color: #333333;
-            --shadow-color: rgba(0, 0, 0, 0.3);
-            
-            /* Free mode dark colors */
-            --gradient-grayscale: linear-gradient(135deg, 
-                #2d2d2d 0%,
-                #3a3a3a 25%,
-                #4a4a4a 50%,
-                #5a5a5a 75%,
-                #6a6a6a 100%
-            );
-        }
-
         /* Free Mode Overrides */
         [data-premium="false"] {
             --accent-gradient: var(--gradient-grayscale);
-            --accent-color: #9ca3af;
-            --premium-glow: rgba(156, 163, 175, 0.3);
-        }
-
-        [data-premium="false"] [data-theme="dark"] {
             --accent-color: #4b5563;
+            --premium-glow: rgba(156, 163, 175, 0.3);
         }
 
         body {
@@ -658,7 +635,6 @@
         }
 
         [data-premium="false"] .add-task-btn:hover,
-        [data-premium="false"] .theme-toggle:hover,
         [data-premium="false"] .settings-btn:hover {
             transform: none;
             box-shadow: 0 4px 15px var(--shadow-color);
@@ -1050,31 +1026,7 @@
             }
         }
 
-        .theme-toggle {
-            background: var(--accent-gradient);
-            border: none;
-            border-radius: 50px;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px var(--shadow-color);
-        }
 
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 6px 20px var(--shadow-color);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .theme-toggle:active {
-            transform: scale(0.95) rotate(-5deg);
-            transition: all 0.1s ease;
-        }
 
         .add-task-btn {
             background: linear-gradient(135deg, #000000 0%, #333333 100%);
@@ -1721,7 +1673,7 @@
                 gap: 0.75rem;
             }
             
-            .settings-btn, .theme-toggle {
+            .settings-btn {
                 width: 45px;
                 height: 45px;
                 font-size: 1.2rem;
@@ -1749,13 +1701,12 @@
         }
     </style>
 </head>
-    <body data-theme="light" data-premium="false">
+    <body data-premium="false">
     <div class="container">
         <div class="top-bar">
             <div class="app-logo">Lumin</div>
             <div class="controls">
                 <button class="settings-btn" id="settingsBtn">⚙</button>
-                <button class="theme-toggle" id="themeToggle">◐</button>
                 <button class="add-task-btn" id="addTaskBtn">
                     <span>+</span>
                 </button>
@@ -1837,13 +1788,13 @@
      <div class="upgrade-banner" id="upgradeBanner">
          <span class="upgrade-banner-icon">✨</span>
          <span class="upgrade-banner-text">Unlock Lumin+ visual experience for just</span>
-         <span class="upgrade-banner-price">$2.99</span>
+         <span class="upgrade-banner-price">$0.99</span>
      </div>
 
      <!-- Payment Modal -->
      <div class="payment-modal" id="paymentModal">
          <div class="payment-panel">
-             <div class="payment-price">$2.99</div>
+             <div class="payment-price">$0.99</div>
              <h2 class="payment-title">Turn your tasks into dopamine</h2>
              <p class="payment-subtitle">Experience the full dopamine-powered productivity journey</p>
              
@@ -1875,9 +1826,9 @@
              </div>
 
              <div class="payment-form" id="paymentForm">
-                 <div class="stripe-buy-button-container">
+                                  <div class="stripe-buy-button-container">
                      <stripe-buy-button
-                       buy-button-id="buy_btn_1RqvjD70TrFNnJXkiuPm4LNB"
+                       buy-button-id="buy_btn_1RqxAi70TrFNnJXkf3b7Kt7x"
                        publishable-key="pk_live_51RqUKG70TrFNnJXk0eWv9nn7MHiFgy0cbSEElfQfgC4pjseVjO1Vr5IqykOEJl7u7aQ53qYJxdWvAzBKu58FRj9200iicAm0ym"
                      >
                      </stripe-buy-button>
@@ -1887,7 +1838,7 @@
                  </div>
                  <div class="payment-security">Secured by Stripe</div>
              </div>
-         </div>
+                  </div>
      </div>
 
      <!-- Timer Panel (Lumin+ Only) -->
@@ -1973,7 +1924,6 @@
                 this.initializeElements();
                 this.bindEvents();
                 this.renderTasks();
-                this.initializeTheme();
                 this.initializePremiumState();
                 this.updateStats();
                 this.initializeStripe();
@@ -1986,7 +1936,6 @@
                 this.taskInputContainer = document.getElementById('taskInputContainer');
                 this.taskInput = document.getElementById('taskInput');
                 this.taskSubmitBtn = document.getElementById('taskSubmitBtn');
-                this.themeToggle = document.getElementById('themeToggle');
                 this.settingsBtn = document.getElementById('settingsBtn');
                 this.settingsModal = document.getElementById('settingsModal');
                 this.closeSettings = document.getElementById('closeSettings');
@@ -2040,7 +1989,6 @@
                     this.hideTaskInput();
                     this.taskAddedViaEnter = false;
                 });
-                this.themeToggle.addEventListener('click', () => this.toggleTheme());
                 this.settingsBtn.addEventListener('click', () => this.showSettings());
                 this.closeSettings.addEventListener('click', () => this.hideSettings());
                 this.completedHeader.addEventListener('click', () => this.toggleCompletedSection());
@@ -2427,22 +2375,7 @@
                 this.completedToggle.classList.toggle('collapsed', this.completedCollapsed);
             }
 
-            toggleTheme() {
-                const body = document.body;
-                const currentTheme = body.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
-                body.setAttribute('data-theme', newTheme);
-                this.themeToggle.textContent = '◐';
-                
-                localStorage.setItem('theme', newTheme);
-            }
 
-            initializeTheme() {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.body.setAttribute('data-theme', savedTheme);
-                this.themeToggle.textContent = '◐';
-            }
 
             saveTasks() {
                 localStorage.setItem('tasks', JSON.stringify(this.tasks));
