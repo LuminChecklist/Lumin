@@ -400,14 +400,30 @@
 
         .payment-panel {
             background: var(--bg-primary);
-            border-radius: 20px;
-            padding: 3rem;
-            max-width: 500px;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 480px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
             transform: scale(0.9) translateY(20px);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-rainbow);
+            opacity: 0.05;
+            border-radius: 24px;
         }
 
         .payment-modal.show .payment-panel {
@@ -415,75 +431,111 @@
         }
 
         .payment-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
             background: var(--gradient-rainbow);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .payment-subtitle {
             color: var(--text-secondary);
             margin-bottom: 2rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .premium-features {
-            text-align: left;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
             margin: 2rem 0;
-            padding: 2rem;
+            padding: 1.5rem;
             background: var(--bg-secondary);
-            border-radius: 15px;
-            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
         }
 
         .premium-feature {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
             color: var(--text-primary);
         }
 
-        .premium-feature:last-child {
-            margin-bottom: 0;
+        .premium-feature:hover {
+            background: var(--accent-gradient);
+            opacity: 0.1;
+            transform: translateY(-1px);
         }
 
         .feature-icon {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .payment-price {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-rainbow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .payment-buttons {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
-            justify-content: center;
             margin-top: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
         .upgrade-btn {
             background: linear-gradient(135deg, #000000 0%, #333333 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
+            border-radius: 16px;
+            padding: 1.25rem 2rem;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            animation: upgradeGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes upgradeGlow {
-            0%, 100% {
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(168, 85, 247, 0.7);
-            }
-            50% {
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(168, 85, 247, 0);
-            }
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 2px solid transparent;
         }
 
         .upgrade-btn::before {
@@ -496,40 +548,16 @@
             background: var(--gradient-rainbow);
             opacity: 0;
             transition: opacity 0.3s ease;
-            animation: rainbowShift 4s ease-in-out infinite;
-        }
-
-        @keyframes rainbowShift {
-            0% {
-                background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 25%, #e0e7ff 50%, #dcfce7 75%, #fed7d7 100%);
-            }
-            25% {
-                background: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 25%, #dcfce7 50%, #fed7d7 75%, #fef3c7 100%);
-            }
-            50% {
-                background: linear-gradient(135deg, #e0e7ff 0%, #dcfce7 25%, #fed7d7 50%, #fef3c7 75%, #fce7f3 100%);
-            }
-            75% {
-                background: linear-gradient(135deg, #dcfce7 0%, #fed7d7 25%, #fef3c7 50%, #fce7f3 75%, #e0e7ff 100%);
-            }
-            100% {
-                background: linear-gradient(135deg, #fed7d7 0%, #fef3c7 25%, #fce7f3 50%, #e0e7ff 75%, #dcfce7 100%);
-            }
+            border-radius: 16px;
         }
 
         .upgrade-btn:hover::before {
-            opacity: 0.4;
+            opacity: 0.2;
         }
 
         .upgrade-btn:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(168, 85, 247, 0.7);
-            animation: upgradeGlow 1s ease-in-out infinite;
-        }
-
-        .upgrade-btn:active {
-            transform: scale(0.98) translateY(0);
-            transition: all 0.1s ease;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(168, 85, 247, 0.3);
         }
 
         .upgrade-btn span {
@@ -537,41 +565,37 @@
             z-index: 1;
         }
 
-        .upgrade-btn.loading {
-            pointer-events: none;
-            opacity: 0.8;
+        .cancel-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
         }
 
-        .upgrade-btn.loading span {
-            opacity: 0.7;
+        .cancel-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
         }
 
-        .upgrade-btn.loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 2;
-        }
-
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        .payment-security {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .payment-form {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .stripe-buy-button-container {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
             justify-content: center;
         }
@@ -579,22 +603,6 @@
         .stripe-buy-button-container stripe-buy-button {
             width: 100%;
             max-width: 300px;
-        }
-
-        .cancel-btn {
-            background: none;
-            border: 2px solid var(--border-color);
-            color: var(--text-secondary);
-            border-radius: 12px;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .cancel-btn:hover {
-            border-color: var(--text-primary);
-            color: var(--text-primary);
         }
 
         /* Free Mode Overrides - Disable animations and effects */
@@ -1791,40 +1799,45 @@
      <div class="upgrade-banner" id="upgradeBanner">
          <span class="upgrade-banner-icon">✨</span>
          <span class="upgrade-banner-text">Unlock Lumin+ visual experience for just</span>
-         <span class="upgrade-banner-price">$1.99</span>
+         <span class="upgrade-banner-price">$2.99</span>
      </div>
 
      <!-- Payment Modal -->
      <div class="payment-modal" id="paymentModal">
          <div class="payment-panel">
-             <h2 class="payment-title">Unlock Lumin+</h2>
+             <h2 class="payment-title">Turn your tasks into dopamine</h2>
              <p class="payment-subtitle">Experience the full dopamine-powered productivity journey</p>
              
              <div class="premium-features">
                  <div class="premium-feature">
                      <span class="feature-icon">🌈</span>
-                     <span>Beautiful pastel rainbow gradients</span>
+                     <span class="feature-text">Pastel rainbow gradients</span>
                  </div>
                  <div class="premium-feature">
                      <span class="feature-icon">✨</span>
-                     <span>Satisfying confetti & glow animations</span>
+                     <span class="feature-text">Confetti & glow rewards</span>
                  </div>
                  <div class="premium-feature">
-                     <span class="feature-icon">🎭</span>
-                     <span>Smooth micro-interactions & hover effects</span>
+                     <span class="feature-icon">🌀</span>
+                     <span class="feature-text">Smooth hover animations</span>
                  </div>
                  <div class="premium-feature">
                      <span class="feature-icon">🎯</span>
-                     <span>Psychology-optimized completion rewards</span>
+                     <span class="feature-text">Psychology-powered completion</span>
                  </div>
                  <div class="premium-feature">
                      <span class="feature-icon">⏱️</span>
-                     <span>Focus timer with Pomodoro technique</span>
+                     <span class="feature-text">Focus timer (Pomodoro)</span>
                  </div>
                  <div class="premium-feature">
                      <span class="feature-icon">🎵</span>
-                     <span>Optional completion sounds (coming soon)</span>
+                     <span class="feature-text">Sounds (coming soon)</span>
                  </div>
+             </div>
+
+             <div class="payment-price">
+                 <div class="price-amount">$2.99</div>
+                 <div class="price-description">One-time unlock. No subscriptions.</div>
              </div>
 
              <div class="payment-form" id="paymentForm">
@@ -1838,8 +1851,9 @@
                  <div class="payment-buttons">
                      <button class="cancel-btn" id="cancelPurchase">Maybe Later</button>
                  </div>
+                 <div class="payment-security">Secured by Stripe</div>
              </div>
-                  </div>
+         </div>
      </div>
 
      <!-- Timer Panel (Lumin+ Only) -->
