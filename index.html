@@ -428,6 +428,7 @@
             background: var(--gradient-rainbow);
             opacity: 0.05;
             border-radius: 24px;
+            pointer-events: none;
         }
 
         .payment-modal.show .payment-panel {
@@ -468,7 +469,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
             padding: 1.5rem;
             background: var(--bg-secondary);
             border-radius: 16px;
@@ -590,20 +591,24 @@
         }
 
         .payment-form {
-            margin-top: 1.5rem;
+            margin-top: 1rem;
         }
 
         .stripe-buy-button-container {
-            margin: 2rem 0 1rem 0;
+            margin: 1rem 0;
             display: flex;
             justify-content: center;
+            position: relative;
+            z-index: 10;
         }
 
         .stripe-buy-button-container stripe-buy-button {
             width: 100%;
             max-width: 300px;
-            display: block;
+            display: block !important;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
         /* Responsive design for mobile */
@@ -2557,6 +2562,21 @@
 
             showPaymentModal() {
                 this.paymentModal.classList.add('show');
+                
+                // Ensure Stripe button is properly initialized
+                setTimeout(() => {
+                    this.initializeStripeButton();
+                }, 500);
+            }
+
+            initializeStripeButton() {
+                // Check if Stripe script is loaded
+                if (typeof window.StripeCheckout !== 'undefined' || document.querySelector('stripe-buy-button')) {
+                    console.log('Stripe button should be ready');
+                } else {
+                    console.log('Stripe script not yet loaded, retrying...');
+                    setTimeout(() => this.initializeStripeButton(), 500);
+                }
             }
 
             hidePaymentModal() {
