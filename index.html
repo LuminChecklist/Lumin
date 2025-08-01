@@ -346,7 +346,15 @@
         }
 
         .upgrade-banner-price {
-            background: var(--gradient-rainbow);
+            background: linear-gradient(135deg, 
+                #fef3c7 0%,   /* soft yellow */
+                #fce7f3 25%,  /* soft pink */
+                #e0e7ff 50%,  /* soft blue */
+                #dcfce7 75%,  /* soft green */
+                #fed7d7 100%  /* soft coral */
+            );
+            background-size: 400% 400%;
+            animation: rainbowShift 4s ease-in-out infinite;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -415,7 +423,15 @@
         .payment-price {
             font-size: 3.5rem;
             font-weight: 800;
-            background: var(--gradient-rainbow);
+            background: linear-gradient(135deg, 
+                #fef3c7 0%,   /* soft yellow */
+                #fce7f3 25%,  /* soft pink */
+                #e0e7ff 50%,  /* soft blue */
+                #dcfce7 75%,  /* soft green */
+                #fed7d7 100%  /* soft coral */
+            );
+            background-size: 400% 400%;
+            animation: rainbowShift 4s ease-in-out infinite;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -423,6 +439,54 @@
             position: relative;
             z-index: 1;
             line-height: 1;
+        }
+
+        @keyframes rainbowShift {
+            0% {
+                background: linear-gradient(135deg, 
+                    #fef3c7 0%,   /* soft yellow */
+                    #fce7f3 25%,  /* soft pink */
+                    #e0e7ff 50%,  /* soft blue */
+                    #dcfce7 75%,  /* soft green */
+                    #fed7d7 100%  /* soft coral */
+                );
+            }
+            25% {
+                background: linear-gradient(135deg, 
+                    #fce7f3 0%,   /* soft pink */
+                    #e0e7ff 25%,  /* soft blue */
+                    #dcfce7 50%,  /* soft green */
+                    #fed7d7 75%,  /* soft coral */
+                    #fef3c7 100%  /* soft yellow */
+                );
+            }
+            50% {
+                background: linear-gradient(135deg, 
+                    #e0e7ff 0%,   /* soft blue */
+                    #dcfce7 25%,  /* soft green */
+                    #fed7d7 50%,  /* soft coral */
+                    #fef3c7 75%,  /* soft yellow */
+                    #fce7f3 100%  /* soft pink */
+                );
+            }
+            75% {
+                background: linear-gradient(135deg, 
+                    #dcfce7 0%,   /* soft green */
+                    #fed7d7 25%,  /* soft coral */
+                    #fef3c7 50%,  /* soft yellow */
+                    #fce7f3 75%,  /* soft pink */
+                    #e0e7ff 100%  /* soft blue */
+                );
+            }
+            100% {
+                background: linear-gradient(135deg, 
+                    #fef3c7 0%,   /* soft yellow */
+                    #fce7f3 25%,  /* soft pink */
+                    #e0e7ff 50%,  /* soft blue */
+                    #dcfce7 75%,  /* soft green */
+                    #fed7d7 100%  /* soft coral */
+                );
+            }
         }
 
         .payment-title {
@@ -1833,8 +1897,8 @@
                      >
                      </stripe-buy-button>
                  </div>
-                 <div class="payment-buttons">
-                     <button class="cancel-btn" id="cancelPurchase">Maybe Later</button>
+             <div class="payment-buttons">
+                 <button class="cancel-btn" id="cancelPurchase">Maybe Later</button>
                  </div>
                  <div class="payment-security">Secured by Stripe</div>
              </div>
@@ -1851,9 +1915,9 @@
          <div class="current-task" id="currentTaskDisplay">
              <div class="task-name" id="timerTaskName">Select a task to focus on</div>
              <div class="task-status" id="timerTaskStatus" style="display: none;">Ready to start</div>
-                         <div class="timer-status-indicator paused" id="timerStatusIndicator">
-                <span id="statusText">Ready to focus: 25:00</span>
-            </div>
+             <div class="timer-status-indicator paused" id="timerStatusIndicator">
+                 <span id="statusText">Ready to focus: 25:00</span>
+             </div>
          </div>
 
          <div class="timer-display">
@@ -2090,7 +2154,7 @@
                 const taskElement = document.querySelector(`[data-task-id="${id}"]`);
                 if (taskElement) {
                                     // Only animate if Lumin+
-                if (this.isPremium) {
+                    if (this.isPremium) {
                         // Step 1: Gentle glow
                         taskElement.classList.add('completing');
                         
