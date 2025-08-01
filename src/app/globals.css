@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables for premium/free modes */
+:root {
+  --bg-primary: #000000;
+  --bg-secondary: #1a1a1a;
+  --text-primary: rgba(255, 255, 255, 0.9);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --border-color: #333333;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  
+  /* Premium: Pastel rainbow gradient */
+  --gradient-rainbow: linear-gradient(135deg, 
+    #fef3c7 0%,   /* soft yellow */
+    #fce7f3 25%,  /* soft pink */
+    #e0e7ff 50%,  /* soft blue */
+    #dcfce7 75%,  /* soft green */
+    #fed7d7 100%  /* soft coral */
+  );
+  
+  /* Free: Grayscale gradient */
+  --gradient-grayscale: linear-gradient(135deg, 
+    #2d2d2d 0%,
+    #3a3a3a 25%,
+    #4a4a4a 50%,
+    #5a5a5a 75%,
+    #6a6a6a 100%
+  );
+  
+  /* Dynamic colors based on premium status */
+  --accent-gradient: var(--gradient-rainbow);
+  --accent-color: #ede9fe;
+  --premium-glow: rgba(168, 85, 247, 0.4);
+}
+
+/* Free Mode Overrides */
+[data-premium="false"] {
+  --accent-gradient: var(--gradient-grayscale);
+  --accent-color: #4b5563;
+  --premium-glow: rgba(156, 163, 175, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fce7f3;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-rainbow);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-rainbow);
+  opacity: 0.8;
+}
+
+/* Base styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+/* Utility classes for premium features */
+.premium-gradient {
+  background: var(--accent-gradient);
+}
+
+.premium-text-gradient {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.premium-glow {
+  box-shadow: 0 0 20px var(--premium-glow);
+}
+
+/* Animation classes */
+.entering {
+  animation: taskEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.completing {
+  animation: taskComplete 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.deleting {
+  animation: taskDelete 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.shifting {
+  animation: taskShift 0.3s ease-out;
+}
+
+/* Confetti */
+.confetti-particle {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: confetti 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 1000;
+}
+
+/* Ripple effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  opacity: 0.3;
+  pointer-events: none;
+  animation: ripple 1s ease-out forwards;
+}
+
+/* Glass morphism effects */
+.glass {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Custom focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-primary;
+}
+
+/* Timer circle animation */
+.timer-circle-progress {
+  transition: stroke-dashoffset 1s linear;
+}
+
+/* Button hover effects */
+.btn-premium {
+  background: var(--accent-gradient);
+  transition: all 0.3s ease;
+}
+
+.btn-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--premium-glow);
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Input styles */
+.input-premium {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+.input-premium:focus {
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .timer-active {
+    transform: translateX(0) !important;
+    max-width: 100% !important;
+  }
+  
+  .timer-panel {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1000 !important;
+  }
+}
